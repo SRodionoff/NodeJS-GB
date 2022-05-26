@@ -1,21 +1,18 @@
 const fs = require('fs');
 const path = require("path");
 const inquirer = require("inquirer");
-const isFile = (fileName) => {
-    return fs.lstatSync(fileName).isFile();
-};
-const list = fs.readdirSync(__dirname).filter(isFile);
+const inquirerFileTreeSelection = require('inquirer-file-tree-selection-prompt');
+inquirer.registerPrompt('file-tree-selection', inquirerFileTreeSelection);
 inquirer
     .prompt([
         {
-            name: "fileName",
-            type: "list",
-            message: "Choose file:",
-            choices: list,
+            name: "directory",
+            type: "file-tree-selection",
+            message: "Choose directory",
         },
     ])
     .then((answer) => {
-        const filePath = path.join(__dirname, answer.fileName);
+        const filePath = answer.directory;
         const readStream = new fs.ReadStream(filePath, 'utf8');
         const writeStream1 = fs.createWriteStream('./89.123.1.41_requests.log', {
             flags: "a",
